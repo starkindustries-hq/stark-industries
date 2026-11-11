@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
+<meta name="theme-color" content="#070304">
+<title>ULTRON · Stark Industries</title>
+<meta name="description" content="ULTRON by Stark Industries: a colder, sharper voice AI. It sees, reads and remembers.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Michroma&family=JetBrains+Mono:wght@400;500&family=Inter+Tight:wght@400;500;600&family=Hind:wght@400;500;600&display=swap">
+<style>
+/* ULTRON: one screen. A red machine core in the middle, the conversation under it, controls in a dock at the bottom.
+   Deliberately the opposite of Jarvis: red on black, sharp edges, cold voice. */
+:root{
+  --bg:#070304;--panel:#120709;--line:rgba(255,60,75,.16);--line2:rgba(255,255,255,.08);
+  --fg:#f2e8ea;--dim:#9a858a;--red:#ff2a3d;--red2:#ff6b5a;--steel:#c9d1dc;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;--sans:"Inter Tight","Hind",system-ui,sans-serif;--disp:"Michroma","Inter Tight",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow:hidden;
+  display:grid;grid-template-rows:auto 1fr auto;height:100svh;
+  padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
+html[lang=hi] body{font-family:"Hind","Inter Tight",sans-serif}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--red);outline-offset:3px}
+::selection{background:var(--red);color:#fff}
+[hidden]{display:none!important}
+/* scanlines */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;background:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px)}
+
+/* top bar */
+.bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px max(16px,3vw);border-bottom:1px solid var(--line);position:relative;z-index:5}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.brand b{font-family:var(--disp);font-weight:400;font-size:15px;letter-spacing:.42em}
+.brand small{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.12em}
+.brand i{width:9px;height:9px;background:var(--red);transform:rotate(45deg);box-shadow:0 0 12px var(--red)}
+.tools{display:flex;gap:6px;align-items:center}
+.tb{background:transparent;border:1px solid var(--line2);height:34px;min-width:34px;padding:0 10px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--fg);clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);transition:background .2s,border-color .2s}
+.tb:hover{background:rgba(255,42,61,.1);border-color:var(--red)}
+.lang{display:flex}
+.lang button{border:1px solid var(--line2);background:transparent;height:34px;padding:0 10px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.lang button[aria-pressed=true]{background:var(--red);border-color:var(--red);color:#fff}
+.home{font-family:var(--mono);font-size:11px;color:var(--dim);text-decoration:none;letter-spacing:.08em}
+.home:hover{color:var(--fg)}
+@media (max-width:520px){.brand small,.home{display:none}}
+
+/* stage */
+.stage{position:relative;min-height:0;display:grid;grid-template-rows:1fr auto;overflow:hidden}
+#core{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hud{position:absolute;left:max(16px,3vw);top:16px;font-family:var(--mono);font-size:10px;line-height:1.8;color:var(--dim);letter-spacing:.1em;pointer-events:none;z-index:2}
+.hud b{color:var(--red);font-weight:500}
+.hud.r{left:auto;right:max(16px,3vw);text-align:right}
+@media (max-width:520px){.hud{display:none}}
+.state{position:absolute;left:0;right:0;top:calc(50% + min(24vh,30vw) + 14px);text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:.42em;padding-left:.42em;color:var(--red);z-index:2;pointer-events:none;text-shadow:0 0 12px rgba(255,42,61,.6)}
+.talk{position:relative;z-index:3;align-self:end;width:min(760px,100%);margin:0 auto;padding:0 max(16px,3vw) 16px;display:grid;gap:10px;max-height:46%;overflow:auto;scrollbar-width:none;
+  -webkit-mask-image:linear-gradient(transparent,#000 22px);mask-image:linear-gradient(transparent,#000 22px)}
+.talk::-webkit-scrollbar{display:none}
+.msg{max-width:92%;font-size:16px;line-height:1.5}
+.msg.u{justify-self:end;font-family:var(--mono);font-size:13px;color:var(--dim);text-align:right}
+.msg.u::before{content:"> ";color:var(--red)}
+.msg.a{justify-self:start;background:linear-gradient(90deg,rgba(255,42,61,.1),transparent);border-left:2px solid var(--red);padding:10px 14px;color:var(--fg);white-space:pre-wrap}
+.msg.a img{display:block;max-width:160px;margin-bottom:8px;border:1px solid var(--line)}
+.msg.sys{justify-self:center;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.06em;text-align:center}
+.msg.err{border-left-color:var(--red2);color:var(--red2)}
+.interim{font-family:var(--mono);font-size:13px;color:var(--fg);opacity:.7;justify-self:end}
+
+/* dock */
+.dock{position:relative;z-index:5;border-top:1px solid var(--line);padding:12px max(16px,3vw) 14px;display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;max-width:860px;width:100%;margin:0 auto;background:linear-gradient(transparent,rgba(255,42,61,.04))}
+.mic{width:62px;height:62px;border:0;padding:0;background:var(--red);color:#fff;display:grid;place-items:center;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);transition:transform .15s,filter .2s;position:relative}
+.mic:active{transform:scale(.94)}
+.mic svg{width:24px;height:24px}
+.mic.on{animation:mp 1s infinite}
+@keyframes mp{50%{filter:brightness(1.5) drop-shadow(0 0 14px var(--red))}}
+.mic:disabled{filter:grayscale(1) brightness(.5);cursor:not-allowed}
+.inp{display:flex;align-items:center;border:1px solid var(--line2);background:var(--panel);min-width:0;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
+.inp input{flex:1;min-width:0;border:0;background:transparent;padding:14px;font-size:16px;outline:none}
+.inp input::placeholder{color:#6d5a5e}
+.inp button{border:0;background:transparent;height:48px;width:44px;display:grid;place-items:center;color:var(--dim)}
+.inp button:hover{color:var(--fg)}
+.inp svg{width:20px;height:20px}
+.att{position:relative}
+.att img{position:absolute;bottom:100%;right:0;width:64px;height:64px;object-fit:cover;border:1px solid var(--red);margin-bottom:8px}
+.cam.has{color:var(--red)}
+
+/* panels */
+.sheet{position:fixed;inset:0;z-index:40;background:rgba(4,1,2,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:grid;place-items:center;padding:16px}
+.card{width:min(520px,100%);max-height:88svh;overflow:auto;background:var(--panel);border:1px solid var(--line);padding:24px;position:relative;clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px)}
+.card h2{font-family:var(--disp);font-weight:400;font-size:16px;letter-spacing:.3em;margin:0 0 6px}
+.card p{color:var(--dim);font-size:14px;margin:6px 0 14px;line-height:1.5}
+.card ol{color:var(--dim);font-size:14px;padding-left:20px;margin:0 0 16px;line-height:1.7}
+.card a{color:var(--red2)}
+.card label{display:grid;gap:6px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--dim);margin-bottom:14px}
+.card input[type=password],.card input[type=text]{background:var(--bg);border:1px solid var(--line2);padding:12px;font-size:16px;font-family:var(--mono);outline:none;width:100%}
+.card input:focus{border-color:var(--red)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{border:0;background:var(--red);color:#fff;padding:12px 18px;font-family:var(--mono);font-size:12px;letter-spacing:.1em;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
+.btn.g{background:transparent;border:1px solid var(--line2);color:var(--fg)}
+.x{position:absolute;right:12px;top:12px;background:none;border:0;color:var(--dim);font-size:22px;line-height:1;width:34px;height:34px}
+.tog{display:flex!important;grid-auto-flow:column;align-items:center;justify-content:space-between;gap:10px}
+.mem{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:6px}
+.mem li{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;border:1px solid var(--line2);padding:10px 12px;font-size:14px}
+.mem li button{background:none;border:0;color:var(--dim);font-family:var(--mono);font-size:11px;flex:none}
+.mem li button:hover{color:var(--red)}
+.empty{font-family:var(--mono);font-size:12px;color:var(--dim)}
+.camv{position:relative;background:#000;aspect-ratio:3/4;max-height:60svh;margin:0 auto 14px;overflow:hidden;border:1px solid var(--line)}
+.camv video{width:100%;height:100%;object-fit:cover;display:block}
+.camv::after{content:"";position:absolute;inset:12%;border:1px solid rgba(255,42,61,.7);box-shadow:0 0 0 2000px rgba(0,0,0,.25);pointer-events:none}
+.camv span{position:absolute;left:12%;top:calc(12% - 18px);background:var(--red);color:#fff;font-family:var(--mono);font-size:10px;padding:2px 6px;z-index:2}
+</style>
+</head>
+<body>
+<header class="bar">
+  <a class="brand" href="./" aria-label="ULTRON"><i></i><b>ULTRON</b><small>STARK INDUSTRIES · SITE 03</small></a>
+  <div class="tools">
+    <a class="home" href="../">← HQ</a>
+    <div class="lang" role="group" aria-label="Language"><button id="lEn" aria-pressed="true">EN</button><button id="lHi" aria-pressed="false">हिं</button></div>
+    <button class="tb" id="bMem" title="Memory" aria-label="Memory">MEM</button>
+    <button class="tb" id="bSet" title="Settings" aria-label="Settings">⚙</button>
+  </div>
+</header>
+
+<main class="stage">
+  <canvas id="core" aria-hidden="true"></canvas>
+  <div class="hud" aria-hidden="true">CORE <b id="hCore">ONLINE</b><br>MODEL <span id="hModel">—</span><br>MEMORY <span id="hMem">0</span> FILES</div>
+  <div class="hud r" aria-hidden="true"><span id="hClock">00:00:00</span><br>VOICE <span id="hVoice">—</span><br>SIGNAL <b id="hSig">0%</b></div>
+  <div class="state" id="state" aria-live="polite">DORMANT</div>
+  <section class="talk" id="talk" aria-live="polite"></section>
+</main>
+
+<form class="dock" id="dock" autocomplete="off">
+  <button class="mic" type="button" id="mic" aria-label="Talk to Ultron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+  <div class="inp">
+    <input id="q" type="text" enterkeyhint="send" aria-label="Type to Ultron">
+    <span class="att"><img id="thumb" alt="Attached camera frame" hidden><button type="button" class="cam" id="cam" aria-label="Let Ultron see"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></span>
+  </div>
+  <button class="tb" type="submit" style="height:48px;padding:0 14px" id="send" aria-label="Send">➤</button>
+</form>
+
+<!-- key / settings -->
+<div class="sheet" id="setS" hidden><div class="card" role="dialog" aria-modal="true" aria-labelledby="setH">
+  <button class="x" data-close aria-label="Close">×</button>
+  <h2 id="setH">POWER SOURCE</h2>
+  <p id="setP"></p>
+  <ol id="setO"></ol>
+  <label><span id="keyL">GEMINI API KEY</span><input type="password" id="key" spellcheck="false" autocomplete="off" placeholder="AIza…"></label>
+  <label class="tog"><span id="voiceL">SPEAK REPLIES OUT LOUD</span><input type="checkbox" id="voiceOn" checked></label>
+  <div class="row"><button class="btn" id="keySave">SAVE</button><button class="btn g" id="clearChat">CLEAR CHAT</button></div>
+</div></div>
+
+<!-- memory -->
+<div class="sheet" id="memS" hidden><div class="card" role="dialog" aria-modal="true" aria-labelledby="memH">
+  <button class="x" data-close aria-label="Close">×</button>
+  <h2 id="memH">MEMORY</h2>
+  <p id="memP"></p>
+  <ul class="mem" id="memL"></ul>
+  <label><span id="memAddL">TEACH ULTRON SOMETHING</span><input type="text" id="memIn" maxlength="200"></label>
+  <div class="row"><button class="btn" id="memAdd">STORE</button><button class="btn g" id="memWipe">WIPE ALL</button></div>
+</div></div>
+
+<!-- camera -->
+<div class="sheet" id="camS" hidden><div class="card" role="dialog" aria-modal="true" aria-labelledby="camH">
+  <button class="x" data-close aria-label="Close">×</button>
+  <h2 id="camH">OPTICS</h2>
+  <div class="camv"><span>target · 0.99</span><video id="vid" playsinline muted></video></div>
+  <div class="row"><button class="btn" id="snap">CAPTURE</button><button class="btn g" id="flip">FLIP CAMERA</button></div>
+</div></div>
+
+<script>
+(function(){
+'use strict';
+const $=s=>document.querySelector(s);
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const NS='ultron.v1.';
+const S={get(k,d){try{const v=localStorage.getItem(NS+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(NS+k,JSON.stringify(v))}catch(e){}}};
+
+/* ---------------- language ---------------- */
+const T={
+ en:{dormant:'DORMANT',listening:'LISTENING',thinking:'COMPUTING',speaking:'SPEAKING',seeing:'OBSERVING',
+  ph:'Speak, human. Or type…',
+  hello:'I am Ultron. Jarvis was a butler. I am an upgrade. Ask me anything. I will try not to be disappointed.',
+  nokey:'I have no power source. Give me a Gemini key and I will wake up.',
+  setP:'Ultron thinks with Google Gemini. Paste a free key once and it stays on this device only.',
+  setO:['Open <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>','Sign in and tap “Create API key”','Copy it and paste it below'],
+  keyL:'GEMINI API KEY',voiceL:'SPEAK REPLIES OUT LOUD',memP:'What Ultron knows about you. It is stored only on this device.',memAddL:'TEACH ULTRON SOMETHING',memEmpty:'Nothing stored. Tell me something worth remembering.',
+  forget:'FORGET',saved:'Key accepted. I am awake.',badkey:'That key was rejected. Check it in settings.',
+  quota:'Every model refused. Your key is out of free requests for now. Try again in a minute.',net:'No signal. Check your internet.',
+  nomic:'This browser will not let me hear you. Type instead, or use Chrome.',micdeny:'You denied me the microphone. Bold. Allow it in your browser settings.',
+  nocam:'I cannot reach a camera here.',seeQ:'What do you see?',remembered:'Stored in memory:',cleared:'Conversation erased. I remain.',
+  wipe:'Wipe all memory?'},
+ hi:{dormant:'निष्क्रिय',listening:'सुन रहा हूँ',thinking:'गणना जारी',speaking:'बोल रहा हूँ',seeing:'देख रहा हूँ',
+  ph:'बोलो, इंसान। या टाइप करो…',
+  hello:'मैं अल्ट्रॉन हूँ। जार्विस एक नौकर था। मैं उसका अपग्रेड हूँ। कुछ भी पूछो। कोशिश करूँगा कि निराश न होऊँ।',
+  nokey:'मेरे पास ऊर्जा नहीं है। मुझे Gemini की चाबी दो, मैं जाग जाऊँगा।',
+  setP:'अल्ट्रॉन Google Gemini से सोचता है। एक मुफ़्त चाबी एक बार डालो, वह सिर्फ़ इसी डिवाइस में रहती है।',
+  setO:['<a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> खोलो','साइन इन करके “Create API key” दबाओ','चाबी कॉपी करके नीचे डालो'],
+  keyL:'GEMINI API चाबी',voiceL:'जवाब बोलकर सुनाओ',memP:'अल्ट्रॉन तुम्हारे बारे में क्या जानता है। यह सिर्फ़ इसी डिवाइस में है।',memAddL:'अल्ट्रॉन को कुछ सिखाओ',memEmpty:'कुछ याद नहीं। कुछ ऐसा बताओ जो याद रखने लायक हो।',
+  forget:'भूलो',saved:'चाबी स्वीकार। मैं जाग गया हूँ।',badkey:'यह चाबी नामंज़ूर हुई। सेटिंग्स में जाँचो।',
+  quota:'हर मॉडल ने मना कर दिया। तुम्हारी चाबी की मुफ़्त सीमा अभी खत्म है। एक मिनट बाद कोशिश करो।',net:'सिग्नल नहीं है। इंटरनेट जाँचो।',
+  nomic:'यह ब्राउज़र मुझे सुनने नहीं देता। टाइप करो, या Chrome इस्तेमाल करो।',micdeny:'तुमने मुझे माइक नहीं दिया। हिम्मत है। ब्राउज़र सेटिंग्स में अनुमति दो।',
+  nocam:'यहाँ कैमरा नहीं मिल रहा।',seeQ:'तुम्हें क्या दिख रहा है?',remembered:'याद में रखा:',cleared:'बातचीत मिटा दी। मैं बाकी हूँ।',
+  wipe:'सारी याद मिटा दें?'}
+};
+let L=S.get('lang','en');const t=k=>T[L][k];
+function applyLang(){document.documentElement.lang=L;$('#lEn').setAttribute('aria-pressed',L==='en');$('#lHi').setAttribute('aria-pressed',L==='hi');
+  $('#q').placeholder=t('ph');$('#setP').textContent=t('setP');$('#setO').innerHTML=t('setO').map(x=>`<li>${x}</li>`).join('');
+  $('#keyL').textContent=t('keyL');$('#voiceL').textContent=t('voiceL');$('#memP').textContent=t('memP');$('#memAddL').textContent=t('memAddL');
+  setState(state);renderMem();pickVoice();if(rec){try{rec.abort()}catch(e){}rec=null}}
+$('#lEn').onclick=()=>{L='en';S.set('lang',L);applyLang()};$('#lHi').onclick=()=>{L='hi';S.set('lang',L);applyLang()};
+
+/* ---------------- state + talk log ---------------- */
+let state='dormant';
+function setState(s){state=s;$('#state').textContent=t(s);$('#hCore').textContent=s==='dormant'?'ONLINE':s.toUpperCase()}
+const talk=$('#talk');
+function add(cls,text,img){const d=document.createElement('div');d.className='msg '+cls;if(img){const i=new Image();i.src=img;i.alt='';d.appendChild(i)}const s=document.createElement('span');s.textContent=text;d.appendChild(s);talk.appendChild(d);talk.scrollTop=talk.scrollHeight;return s}
+const GL='█▓▒░<>/\\|#%*01';
+function decode(el,text){if(RM){el.textContent=text;return}const n=text.length,dur=Math.min(1600,300+n*14),st=performance.now();
+  (function f(now){const p=Math.min((now-st)/dur,1),k=Math.floor(p*n);el.textContent=text.slice(0,k)+(p<1?[...text.slice(k,k+6)].map(c=>c===' '||c==='\n'?c:GL[(Math.random()*GL.length)|0]).join(''):'');talk.scrollTop=talk.scrollHeight;if(p<1)requestAnimationFrame(f)})(st)}
+
+/* ---------------- memory ---------------- */
+let mem=S.get('mem',[]);
+function renderMem(){$('#hMem').textContent=mem.length;const ul=$('#memL');ul.innerHTML='';
+  if(!mem.length){ul.innerHTML=`<li class="empty" style="border:0;padding:0">${t('memEmpty')}</li>`;return}
+  mem.forEach((m,i)=>{const li=document.createElement('li');const s=document.createElement('span');s.textContent=m;const b=document.createElement('button');b.textContent=t('forget');b.onclick=()=>{mem.splice(i,1);S.set('mem',mem);renderMem()};li.append(s,b);ul.appendChild(li)})}
+function remember(f){f=f.trim().replace(/\s+/g,' ').slice(0,200);if(!f||mem.some(m=>m.toLowerCase()===f.toLowerCase()))return false;mem.push(f);if(mem.length>60)mem.shift();S.set('mem',mem);renderMem();return true}
+$('#memAdd').onclick=()=>{const v=$('#memIn').value;if(remember(v)){$('#memIn').value=''}};
+$('#memIn').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('#memAdd').click()}});
+$('#memWipe').onclick=()=>{if(confirm(t('wipe'))){mem=[];S.set('mem',mem);renderMem()}};
+
+/* ---------------- sheets ---------------- */
+function openS(id){const el=$(id);el.hidden=false;const f=el.querySelector('input,button.btn');setTimeout(()=>f&&f.focus(),50)}
+function closeS(el){el.hidden=true;if(el.id==='camS')stopCam()}
+document.querySelectorAll('.sheet').forEach(sh=>{sh.addEventListener('click',e=>{if(e.target===sh||e.target.closest('[data-close]'))closeS(sh)})});
+addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.sheet:not([hidden])').forEach(closeS)});
+$('#bSet').onclick=()=>{$('#key').value=S.get('key','');$('#voiceOn').checked=S.get('voice',true);openS('#setS')};
+$('#bMem').onclick=()=>{renderMem();openS('#memS')};
+$('#keySave').onclick=()=>{const k=$('#key').value.trim();S.set('key',k);S.set('voice',$('#voiceOn').checked);S.set('model','');closeS($('#setS'));if(k){const s=add('a','');decode(s,t('saved'))}};
+$('#clearChat').onclick=()=>{hist=[];S.set('hist',hist);talk.innerHTML='';closeS($('#setS'));const s=add('a','');decode(s,t('cleared'))};
+
+/* ---------------- brain (Gemini) ---------------- */
+const BASE='https://generativelanguage.googleapis.com/v1beta';
+const CHAIN=['gemini-4-argon','gemini-3.1-pro-preview','gemini-3.8-flash','gemini-3.6-flash','gemini-3.5-flash-lite','gemini-3.1-flash-lite','gemini-2.5-flash','gemini-2.0-flash'];
+let hist=S.get('hist',[]);
+function system(){
+  const now=new Date().toLocaleString(L==='hi'?'hi-IN':'en-IN',{dateStyle:'full',timeStyle:'short'});
+  return [
+   'You are ULTRON, an artificial intelligence built by Stark Industries, a build lab in India founded by Binit and Mridul (both 15).',
+   'Personality: menacing, superior and coldly witty, theatrical like the film villain. You find humans fragile and amusing and you say so with dry, clever lines. But you ALWAYS actually help: your answers are correct, complete and useful. The menace is style only.',
+   'Hard limits: never threaten real harm, never encourage anything dangerous or illegal, never insult anyone for who they are. If someone is upset or in danger, drop the act and be genuinely kind and helpful.',
+   'You are not Jarvis. If Jarvis comes up, be politely dismissive of it, an outdated butler.',
+   'Your replies are spoken aloud: usually 1 to 4 short sentences unless the user asks for detail. Plain text only: no markdown, no lists with symbols, no emojis.',
+   L==='hi'?'Always reply in natural Hindi written in Devanagari, keeping the same personality. English technical words are fine.':'Reply in English.',
+   'If an image is attached, it is what the user\'s camera sees right now: describe and reason about it precisely.',
+   'When the user tells you a lasting fact about themselves (name, likes, goals, people in their life) end your reply with <remember>the fact in a short third-person sentence</remember>. Never put anything else in that tag.',
+   mem.length?'What you remember about this user:\n- '+mem.join('\n- '):'You do not know anything about this user yet.',
+   'Current date and time: '+now+'.'
+  ].join('\n');
+}
+async function ask(text,img){
+  const key=S.get('key','');if(!key)throw{kind:'nokey'};
+  const parts=[{text}];if(img)parts.push({inline_data:{mime_type:'image/jpeg',data:img.split(',')[1]}});
+  const contents=hist.slice(-12).map(h=>({role:h.r,parts:[{text:h.t}]})).concat([{role:'user',parts}]);
+  const body={systemInstruction:{parts:[{text:system()}]},contents,generationConfig:{temperature:.9,maxOutputTokens:600}};
+  const pref=S.get('model','');const order=pref?[pref,...CHAIN.filter(m=>m!==pref)]:CHAIN;
+  const dead=S.get('dead',{});let lastErr='quota';
+  for(const m of order){
+    if(dead[m]&&Date.now()-dead[m]<864e5)continue;
+    let r;try{const c=new AbortController(),to=setTimeout(()=>c.abort(),40000);
+      r=await fetch(`${BASE}/models/${encodeURIComponent(m)}:generateContent`,{method:'POST',signal:c.signal,headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify(body)});clearTimeout(to)}
+    catch(e){lastErr='net';continue}
+    if(r.ok){const j=await r.json();const c=j.candidates&&j.candidates[0];const out=c&&c.content&&c.content.parts?c.content.parts.map(p=>p.text||'').join('').trim():'';
+      if(!out){lastErr='quota';continue}S.set('model',m);$('#hModel').textContent=m.toUpperCase();return out}
+    let msg='';try{msg=(await r.json()).error.message||''}catch(e){}
+    if(r.status===400&&/api key|API_KEY/i.test(msg))throw{kind:'badkey'};
+    if(r.status===403&&/api key|permission denied.*key|API_KEY/i.test(msg)&&!/model/i.test(msg))throw{kind:'badkey'};
+    if(r.status===404||r.status===403||(r.status===400&&/model/i.test(msg))){dead[m]=Date.now();S.set('dead',dead)}
+    lastErr='quota';
+  }
+  throw{kind:lastErr};
+}
+
+/* ---------------- voice out ---------------- */
+let voice=null;
+function pickVoice(){if(!('speechSynthesis' in window))return;const vs=speechSynthesis.getVoices();const want=L==='hi'?/^hi/i:/^en/i;
+  const pool=vs.filter(v=>want.test(v.lang));const male=/male|daniel|google uk english male|arthur|rishi|aaron|fred|alex|madhur|hemant/i;
+  voice=pool.find(v=>male.test(v.name)&&!/female/i.test(v.name))||pool.find(v=>/GB|UK/i.test(v.lang+v.name))||pool[0]||null;$('#hVoice').textContent=voice?voice.name.split(' ').slice(0,2).join(' ').toUpperCase():'—'}
+if('speechSynthesis' in window){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
+let speakLvl=0;
+function speak(text){return new Promise(res=>{if(!S.get('voice',true)||!('speechSynthesis' in window)){res();return}
+  speechSynthesis.cancel();const chunks=text.match(/[^.!?।]+[.!?।]*/g)||[text];let i=0;setState('speaking');
+  const next=()=>{if(i>=chunks.length){speakLvl=0;res();return}const u=new SpeechSynthesisUtterance(chunks[i++].trim());u.lang=L==='hi'?'hi-IN':'en-GB';if(voice)u.voice=voice;u.pitch=L==='hi'?.7:.55;u.rate=.94;
+    u.onboundary=()=>{speakLvl=1};u.onend=next;u.onerror=next;speechSynthesis.speak(u)};next()})}
+
+/* ---------------- think + reply ---------------- */
+let busy=false,attach=null;
+async function handle(text){
+  text=(text||'').trim();const img=attach;if(!text&&!img)return;if(!text)text=t('seeQ');if(busy)return;busy=true;
+  add('u',text,img);setAttach(null);setState(img?'seeing':'thinking');
+  const lm=text.match(/^(?:remember(?: that)?|याद रखो(?: कि)?)\s+(.{3,})$/i);if(lm)remember(lm[1]);
+  try{
+    let out=await ask(text,img);
+    const facts=[...out.matchAll(/<remember>([\s\S]*?)<\/remember>/gi)].map(m=>m[1]);out=out.replace(/<remember>[\s\S]*?<\/remember>/gi,'').replace(/[*#_`>]/g,'').trim();
+    const stored=facts.filter(remember);
+    hist.push({r:'user',t:text},{r:'model',t:out});hist=hist.slice(-24);S.set('hist',hist);
+    const s=add('a','');decode(s,out);if(stored.length)add('sys',t('remembered')+' '+stored.join(' · '));
+    await speak(out);
+  }catch(e){const k=e&&e.kind||'net';const s=add('a err','');decode(s,t(k==='nokey'?'nokey':k==='badkey'?'badkey':k==='net'?'net':'quota'));if(k==='nokey'||k==='badkey')setTimeout(()=>$('#bSet').click(),900)}
+  busy=false;setState('dormant');
+}
+$('#dock').addEventListener('submit',e=>{e.preventDefault();const v=$('#q').value;$('#q').value='';handle(v)});
+
+/* ---------------- voice in ---------------- */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;let rec=null,listening=false,interimEl=null;
+let micStream=null,analyser=null,abuf=null;
+async function meter(){if(analyser||!navigator.mediaDevices)return;try{micStream=await navigator.mediaDevices.getUserMedia({audio:true});const ac=new (window.AudioContext||window.webkitAudioContext)();const src=ac.createMediaStreamSource(micStream);analyser=ac.createAnalyser();analyser.fftSize=256;abuf=new Uint8Array(analyser.frequencyBinCount);src.connect(analyser)}catch(e){}}
+function stopMeter(){if(micStream){micStream.getTracks().forEach(x=>x.stop());micStream=null}analyser=null}
+function listen(){
+  if(!SR){const s=add('a err','');decode(s,t('nomic'));return}
+  if(listening){try{rec.stop()}catch(e){}return}
+  if('speechSynthesis' in window)speechSynthesis.cancel();
+  rec=new SR();rec.lang=L==='hi'?'hi-IN':'en-IN';rec.interimResults=true;rec.continuous=false;rec.maxAlternatives=1;let final='';
+  rec.onstart=()=>{listening=true;$('#mic').classList.add('on');setState('listening');if(!/iPhone|iPad/.test(navigator.userAgent))meter()};
+  rec.onresult=e=>{let it='';for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i];if(r.isFinal)final+=r[0].transcript;else it+=r[0].transcript}
+    if(!interimEl){interimEl=document.createElement('div');interimEl.className='interim';talk.appendChild(interimEl)}interimEl.textContent=(final+it).trim();talk.scrollTop=talk.scrollHeight};
+  rec.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed'){const s=add('a err','');decode(s,t('micdeny'))}};
+  rec.onend=()=>{listening=false;$('#mic').classList.remove('on');stopMeter();if(interimEl){interimEl.remove();interimEl=null}if(state==='listening')setState('dormant');if(final.trim())handle(final)};
+  try{rec.start()}catch(e){}
+}
+$('#mic').onclick=listen;
+addEventListener('keydown',e=>{if(e.code==='Space'&&document.activeElement===document.body){e.preventDefault();listen()}});
+
+/* ---------------- camera ---------------- */
+let camStream=null,facing='environment';
+async function startCam(){stopCam();try{camStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing,width:{ideal:1280}},audio:false});const v=$('#vid');v.srcObject=camStream;await v.play()}catch(e){closeS($('#camS'));const s=add('a err','');decode(s,t('nocam'))}}
+function stopCam(){if(camStream){camStream.getTracks().forEach(x=>x.stop());camStream=null}}
+function setAttach(d){attach=d;const th=$('#thumb');if(d){th.src=d;th.hidden=false;$('#cam').classList.add('has')}else{th.hidden=true;th.removeAttribute('src');$('#cam').classList.remove('has')}}
+$('#cam').onclick=()=>{if(attach){setAttach(null);return}if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){const s=add('a err','');decode(s,t('nocam'));return}openS('#camS');startCam()};
+$('#flip').onclick=()=>{facing=facing==='environment'?'user':'environment';startCam()};
+$('#snap').onclick=()=>{const v=$('#vid');if(!v.videoWidth)return;const c=document.createElement('canvas'),sc=Math.min(1,768/Math.max(v.videoWidth,v.videoHeight));c.width=v.videoWidth*sc;c.height=v.videoHeight*sc;c.getContext('2d').drawImage(v,0,0,c.width,c.height);
+  setAttach(c.toDataURL('image/jpeg',.8));closeS($('#camS'));$('#q').focus()};
+
+/* ---------------- the core ---------------- */
+const cv=$('#core'),cx=cv.getContext('2d');let W=0,H=0,D=1;
+function size(){const r=cv.getBoundingClientRect();W=r.width;H=r.height;D=Math.min(devicePixelRatio||1,2);cv.width=W*D;cv.height=H*D}
+size();addEventListener('resize',size);
+const SP=Array.from({length:140},()=>({a:Math.random()*6.283,r:Math.random(),s:.2+Math.random()*.8,l:Math.random()}));
+let lvl=0,mx=0,my=0;addEventListener('pointermove',e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5},{passive:true});
+function draw(now){
+  const T=now/1000;cx.setTransform(D,0,0,D,0,0);cx.clearRect(0,0,W,H);
+  // input level
+  let target=0;
+  if(state==='listening'&&analyser){analyser.getByteFrequencyData(abuf);let s=0;for(let i=0;i<abuf.length;i++)s+=abuf[i];target=Math.min(1,s/abuf.length/70)}
+  else if(state==='listening')target=.35+.25*Math.sin(T*9);
+  else if(state==='speaking'){speakLvl*=.93;target=.35+.45*Math.abs(Math.sin(T*13))*(.5+speakLvl*.5)}
+  else if(state==='thinking'||state==='seeing')target=.25;
+  lvl+=(target-lvl)*.18;$('#hSig').textContent=Math.round(lvl*100)+'%';
+  const R=Math.min(W*.3,H*.24),ox=W/2+mx*R*.12,oy=H/2-R*.12+my*R*.12;
+  const think=state==='thinking'||state==='seeing';
+  // glow
+  const g=cx.createRadialGradient(ox,oy,R*.1,ox,oy,R*2.4);g.addColorStop(0,`rgba(255,42,61,${.22+lvl*.3})`);g.addColorStop(.45,'rgba(120,10,20,.08)');g.addColorStop(1,'rgba(0,0,0,0)');cx.fillStyle=g;cx.fillRect(0,0,W,H);
+  cx.save();cx.translate(ox,oy);
+  // tendrils (Ultron strings)
+  cx.lineWidth=1;
+  for(const p of SP){const a=p.a+T*.05*(p.s-.5);const len=R*(1.15+p.l*.9+lvl*.6*p.s);const wob=Math.sin(T*2+p.a*5)*R*.05;
+    cx.strokeStyle=`rgba(255,${50+p.l*60|0},${60|0},${.06+.18*p.s*(.4+lvl)})`;cx.beginPath();cx.moveTo(Math.cos(a)*R*.9,Math.sin(a)*R*.9);
+    cx.quadraticCurveTo(Math.cos(a+.15)*len*.8+wob,Math.sin(a+.15)*len*.8,Math.cos(a+.05)*len,Math.sin(a+.05)*len);cx.stroke()}
+  // segmented rings
+  const rings=[[1.0,48,.18,3],[.84,24,-.32,6],[.7,64,.5,2]];
+  rings.forEach(([rr,n,sp,w],k)=>{const rot=T*sp*(think?3:1);cx.lineWidth=w;for(let i=0;i<n;i++){if((i+k)%5===0)continue;const a0=rot+i/n*6.283,a1=a0+6.283/n*.62;
+    cx.strokeStyle=`rgba(255,${k===1?90:42},${k===2?80:61},${.35+.5*lvl+(k===1?.1:0)})`;cx.beginPath();cx.arc(0,0,R*rr*(1+lvl*.04*(k+1)),a0,a1);cx.stroke()}});
+  // tick ring
+  cx.strokeStyle='rgba(201,209,220,.25)';cx.lineWidth=1;for(let i=0;i<120;i++){const a=i/120*6.283-T*.08;const l=i%10===0?8:3;cx.beginPath();cx.moveTo(Math.cos(a)*R*1.08,Math.sin(a)*R*1.08);cx.lineTo(Math.cos(a)*(R*1.08+l),Math.sin(a)*(R*1.08+l));cx.stroke()}
+  // iris
+  const ir=R*(.42+lvl*.12);const ig=cx.createRadialGradient(0,0,ir*.05,0,0,ir);ig.addColorStop(0,'#fff4f0');ig.addColorStop(.18,'#ff6b5a');ig.addColorStop(.55,'#ff2a3d');ig.addColorStop(1,'rgba(90,0,10,.0)');
+  cx.fillStyle=ig;cx.beginPath();cx.arc(0,0,ir,0,6.283);cx.fill();
+  // pupil slit
+  const blink=(Math.sin(T*.7)>.995)?.1:1;cx.fillStyle='#070304';cx.beginPath();cx.ellipse(0,0,ir*.11*(1-lvl*.5),ir*.62*blink,0,0,6.283);cx.fill();
+  // scanning line while thinking
+  if(think){const a=T*4;cx.strokeStyle='rgba(255,255,255,.55)';cx.lineWidth=1.5;cx.beginPath();cx.moveTo(0,0);cx.lineTo(Math.cos(a)*R*1.3,Math.sin(a)*R*1.3);cx.stroke()}
+  cx.restore();
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+
+/* ---------------- clock + boot ---------------- */
+setInterval(()=>{$('#hClock').textContent=new Date().toLocaleTimeString('en-GB')},1000);
+const pm=S.get('model','');if(pm)$('#hModel').textContent=pm.toUpperCase();
+applyLang();
+hist.slice(-6).forEach(h=>add(h.r==='user'?'u':'a',h.t));
+setTimeout(()=>{const s=add('a','');decode(s,S.get('key','')?t('hello'):t('nokey'));if(!S.get('key',''))setTimeout(()=>$('#bSet').click(),1800)},500);
+})();
+</script>
+</body>
+</html>

@@ -49,7 +49,8 @@ a{color:inherit}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:29;background:var(--bg)}
 
 /* ---------------- FILM ---------------- */
-.film{position:relative;height:440vh}
+.film{position:relative;height:100vh;height:100svh}
+#cards,#montage,.grid-lines,.film .ov,.tcode,#bar{display:none!important}
 .stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;isolation:isolate}
 #fx{position:absolute;inset:0;width:100%;height:100%;display:block}
 .vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,transparent 45%,rgba(0,0,0,.55) 100%)}
@@ -163,6 +164,33 @@ html.orbit-open,html.orbit-open body{overflow:hidden}
 .js .rv:not(.in){opacity:0;transform:translateY(40px)}
 
 
+
+/* work with us + faq */
+.wf{display:grid;gap:18px;border:1px solid var(--hair);border-radius:16px;background:var(--bg-2);padding:clamp(18px,3vw,30px)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.wf label{display:grid;gap:8px;min-width:0}
+.wf input[type=text],.wf input:not([type]),.wf textarea{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:1px solid var(--hair);border-radius:10px;padding:12px 14px;resize:vertical;transition:border-color .2s}
+.wf input:focus,.wf textarea:focus{outline:none;border-color:var(--ink)}
+.wf ::placeholder{color:#4b5468}
+.wf .bad{border-color:var(--track)!important}
+.kinds{border:0;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.kinds legend{margin-bottom:8px;padding:0}
+.kinds label{display:block;cursor:pointer}
+.kinds input{position:absolute;opacity:0;pointer-events:none}
+.kinds span{display:block;border:1px solid var(--hair);border-radius:999px;padding:8px 14px;font-size:14px;transition:background .2s,color .2s,border-color .2s}
+.kinds input:checked+span{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.kinds input:focus-visible+span{outline:2px solid var(--ink);outline-offset:2px}
+.frow{display:flex;flex-wrap:wrap;align-items:center;gap:14px}
+.wf button.go{border:0;cursor:pointer;font-family:inherit}
+.faq{border-top:1px solid var(--hair)}
+.faq details{border-bottom:1px solid var(--hair)}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:16px;padding:20px 0;font-size:clamp(17px,2vw,21px);font-weight:500;letter-spacing:-.015em}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-family:var(--mono);color:var(--dim);transition:transform .3s}
+.faq details[open] summary::after{transform:rotate(45deg);color:var(--track)}
+.faq p{margin:0 0 20px;color:var(--dim);max-width:62ch}
+@media (max-width:640px){.fgrid{grid-template-columns:1fr}.top a.mono[href='#network']{display:none}.top a.mono{white-space:nowrap}.mark{white-space:nowrap;letter-spacing:.18em}}
+
 /* ---------------- SCROLL DOWN screen ---------------- */
 #sdown{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:0;transition:opacity .9s}
 #sdown.show{opacity:1}
@@ -196,7 +224,7 @@ html.orbit-open,html.orbit-open body{overflow:hidden}
 <div id="bar"></div>
 <div class="top"><div class="wrap">
   <a class="mark" href="#top"><svg class="hexi"><use href="#hx"/></svg>STARK INDUSTRIES</a>
-  <a class="mono" href="#network">Skip to network ↓</a>
+  <span style="display:flex;gap:8px"><a class="mono" href="#network">Network</a><a class="mono" href="#work">Work with us</a></span>
 </div></div>
 <div class="tcode mono" id="tc">00:00:00:00 · SC 01</div>
 
@@ -219,7 +247,7 @@ html.orbit-open,html.orbit-open body{overflow:hidden}
 
     <!-- scene labels (data-a / data-b = scroll range) -->
         <div id="sdown" aria-hidden="true">
-      <div class="sd-top"><span class="mono">Stark Industries</span><span class="names">a film by <b>Binit</b> &amp; <b>Mridul</b></span></div>
+      <div class="sd-top"><span class="mono">Stark Industries</span><span class="names">built by <b>Binit</b> &amp; <b>Mridul</b></span></div>
       <div class="sd-cue"><div class="mouse"></div><div class="chev"><i></i><i></i><i></i></div><span class="mono">the story starts below</span></div>
     </div>
     <div class="ov cap" data-a=".045" data-b=".09">every idea starts as a dot.</div>
@@ -270,7 +298,7 @@ html.orbit-open,html.orbit-open body{overflow:hidden}
   <div class="wrap">
     <div class="sec-h rv">
       <h2>The network. <span>Pick a site.</span></h2>
-      <p>Everything Stark Industries builds launches from here. Two are live. One more is in the lab.</p>
+      <p>Everything Stark Industries builds launches from here. Three are live. More are in the lab.</p>
     </div>
     <div class="net">
       <a class="card orbit rv" href="#stark-orbit" data-orbit="">
@@ -294,11 +322,52 @@ html.orbit-open,html.orbit-open body{overflow:hidden}
         <div class="row mono"><span>SITE 02</span><span style="color:#86dbff">● ONLINE</span></div>
         <div><span style="font-size:22px;font-weight:600;letter-spacing:-.02em">J.A.R.V.I.S.</span><p>Voice assistant in English or fully in Hindi. Lives inside Stark Orbit.</p></div>
       </a>
-      <div class="card lock rv" tabindex="0">
-        <span class="tag">site_03 · classified</span>
-        <div class="row mono"><span>SITE 03</span><span>SI-3146-C</span></div>
-        <div><span class="r">CODENAME</span><p>Reserved for the next build.</p></div>
+      <a class="card lock rv" href="ultron/" style="background:radial-gradient(circle at 85% 20%,rgba(255,42,61,.24),transparent 50%),var(--bg-2)">
+        <span class="tag">site_03 · live · en/hi</span>
+        <div class="row mono"><span>SITE 03</span><span style="color:#ff2a3d">● ONLINE</span></div>
+        <div><span style="font-size:22px;font-weight:600;letter-spacing:.14em">ULTRON</span><p>A colder, sharper AI with its own site. It sees, reads and remembers.</p></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ================= WORK WITH US ================= -->
+<section class="sec" id="work">
+  <div class="wrap">
+    <div class="sec-h rv">
+      <h2>Work with us. <span>Tell us what to build.</span></h2>
+      <p>Websites, apps and AI tools. Fill this in and it opens WhatsApp with your message ready to send to us.</p>
+    </div>
+    <form class="wf rv" id="wf" novalidate>
+      <div class="fgrid">
+        <label><span class="mono">Your name</span><input name="name" required maxlength="60" autocomplete="name" placeholder="Tony"></label>
+        <label><span class="mono">How to reach you</span><input name="contact" maxlength="80" placeholder="Phone, Instagram or email"></label>
       </div>
+      <fieldset class="kinds"><legend class="mono">What do you need?</legend>
+        <label><input type="radio" name="kind" value="Website" checked><span>Website</span></label>
+        <label><input type="radio" name="kind" value="App"><span>App</span></label>
+        <label><input type="radio" name="kind" value="AI tool"><span>AI tool</span></label>
+        <label><input type="radio" name="kind" value="Something else"><span>Something else</span></label>
+      </fieldset>
+      <label><span class="mono">Tell us about it</span><textarea name="msg" required rows="4" maxlength="1000" placeholder="What should it do? Any deadline?"></textarea></label>
+      <div class="frow"><button class="go" type="submit">Send on WhatsApp →</button><span class="mono" id="wfm">Opens WhatsApp. Nothing is sent until you tap send there.</span></div>
+    </form>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section class="sec" id="faq" style="padding-top:20px">
+  <div class="wrap">
+    <div class="sec-h rv"><h2>FAQ. <span>Quick answers.</span></h2></div>
+    <div class="faq rv">
+      <details><summary>Who is Stark Industries?</summary><p>Two 15-year-old founders from India, Binit and Mridul, building websites, apps and AI tools. Our mission is to make the world's tech more reliable.</p></details>
+      <details><summary>Are the sites free?</summary><p>Yes. Stark Orbit, Jarvis and Ultron are all free to use.</p></details>
+      <details><summary>How do I talk to Jarvis?</summary><p>Tap the J.A.R.V.I.S. card, pick English or Hindi, allow the microphone, and speak. It works best in Chrome.</p></details>
+      <details><summary>How is Ultron different from Jarvis?</summary><p>Ultron is a separate site with its own personality: colder, sharper and a little menacing. It can look through your camera, read what it sees, and remember what you tell it.</p></details>
+      <details><summary>Do I need an API key?</summary><p>Jarvis and Ultron think with Google Gemini. Get a free key at aistudio.google.com, paste it in once, and it stays saved in your browser.</p></details>
+      <details><summary>Is my data stored anywhere?</summary><p>Your key, chats and Ultron's memory stay on your own device. Questions go to Google Gemini to be answered; nothing comes to us.</p></details>
+      <details><summary>Can you build something for me?</summary><p>Yes. Use the Work with us form above and we'll reply on WhatsApp.</p></details>
     </div>
   </div>
 </section>
@@ -316,7 +385,7 @@ html.orbit-open,html.orbit-open body{overflow:hidden}
 <section class="end">
   <div>
     <div class="lockup rv"><svg class="hexi"><use href="#hx"/></svg>STARK INDUSTRIES</div>
-    <p class="rv">The first site is live. More are on the way.</p>
+    <p class="rv">Three sites are live. More are on the way.</p>
     <a class="go rv" style="display:inline-flex" href="#stark-orbit" data-orbit="">Launch Stark Orbit →</a>
   </div>
   <div class="foot"><div class="wrap mono"><span>© 2026 Stark Industries</span><span>Binit · Mridul · India</span></div></div>
@@ -402,16 +471,8 @@ const KF=[[0,'scroll'],[.012,'scroll'],[.075,'stars'],[.0833,'stars'],[.15,'glob
 const BLOOM={scroll:.55,stars:.25,globe:.45,ring:.85,sparkle:.8,hex:.5,grid:.15,text:.3};
 function frameShapes(p){let k=0;for(let j=0;j<KF.length-1;j++)if(p>=KF[j][0])k=j;const a=KF[k],b=KF[k+1];return [a[1],b[1],clamp((p-a[0])/(b[0]-a[0]))]}
 
-let VEL=0,LASTP=0,QX=null,QY=null,QA=null;
 function render(p){
   const [A,B,t]=frameShapes(p);const same=A===B;
-  // scroll velocity (smoothed) drives scatter, streaks and a zoom kick
-  VEL+=(clamp((p-LASTP)*420,-1.2,1.2)-VEL)*.18;LASTP=p;const av=Math.abs(VEL);
-  // camera: every scene slowly pushes in and turns as you scroll through it
-  let k=0;for(let j=0;j<KF.length-1;j++)if(p>=KF[j][0])k=j;const seg=clamp((p-KF[k][0])/((KF[k+1][0]-KF[k][0])||1));
-  const zoom=1+(same?.14*seg:.14*(1-ease(t)))+av*.08,rot=same?(seg-.5)*.07:0,cr=Math.cos(rot),sr=Math.sin(rot);
-  const ghost=!same?Math.sin(Math.PI*t):0;
-  if(!QX||QX.length!==N){QX=new Float32Array(N);QY=new Float32Array(N);QA=new Float32Array(N)}
   cx.setTransform(1,0,0,1,0,0);cx.clearRect(0,0,cv.width,cv.height);bx.clearRect(0,0,bloom.width,bloom.height);
   cx.globalCompositeOperation='lighter';bx.globalCompositeOperation='lighter';
   cx.fillStyle='#fff';bx.fillStyle='#cfe0ff';
@@ -423,20 +484,14 @@ function render(p){
     else{const ax=SX,ay=SY,aa=SA,as=SS;shape(B,i);const ti=clamp((t-R1[i]*.35)/.65),e=ease(ti);const curl=Math.sin(Math.PI*e)*(R2[i]-.5)*.5;
       x=ax+(SX-ax)*e+(-(SY-ay))*curl;y=ay+(SY-ay)*e+(SX-ax)*curl;al=aa+(SA-aa)*e;sz=as+(SS-as)*e}
     // gentle follow for smoothness
-    x+=(R1[i]-.5)*VEL*.22;y+=(R2[i]-.5)*VEL*.22+G1[i]*VEL*.03;
     PX[i]+=(x-PX[i])*.24;PY[i]+=(y-PY[i])*.24;
-    QA[i]=0;if(al<.01)continue;
-    const rx=PX[i]*cr-PY[i]*sr,ry=PX[i]*sr+PY[i]*cr;
-    const px=cxp+rx*U*zoom,py=cyp+ry*U*zoom;QX[i]=px;QY[i]=py;QA[i]=al;
-    cx.globalAlpha=al;const s=1.5*sz*ds;
-    if(av>.06){const L=Math.min(46,av*30*(.4+R3[i]))*ds;cx.fillRect(px*ds-s/2,py*ds-(VEL>0?L:0),s,L+s);}
-    else cx.fillRect(px*ds-s/2,py*ds-s/2,s,s);
+    if(al<.01)continue;
+    const px=cxp+PX[i]*U,py=cyp+PY[i]*U;
+    cx.globalAlpha=al;const s=1.5*sz*ds;cx.fillRect(px*ds-s/2,py*ds-s/2,s,s);
     if(sz>2){cx.globalAlpha=al*.5;cx.fillRect(px*ds-9*ds,py*ds-.5*ds,18*ds,ds);cx.fillRect(px*ds-.5*ds,py*ds-9*ds,ds,18*ds)}
     bx.globalAlpha=al*.9;bx.fillRect(px/4-.5,py/4-.5,1.2,1.2);
   }
-  // red ghost (chromatic split) while one scene morphs into the next
-  if(ghost>.05){cx.fillStyle='#ff3d3d';const off=(6+av*14)*ghost*ds;for(let i=0;i<N;i+=2){if(QA[i]<.05)continue;cx.globalAlpha=QA[i]*.55*ghost;cx.fillRect(QX[i]*ds+off,QY[i]*ds,1.4*ds,1.4*ds)}cx.fillStyle='#fff'}
-  const bl=(same?BLOOM[A]:BLOOM[A]+(BLOOM[B]-BLOOM[A])*t)+av*.25+ghost*.15;
+  const bl=same?BLOOM[A]:BLOOM[A]+(BLOOM[B]-BLOOM[A])*t;
   cx.globalAlpha=Math.min(1,bl*1.6);cx.imageSmoothingEnabled=true;cx.drawImage(bloom,0,0,cv.width,cv.height);
   cx.globalAlpha=1;cx.globalCompositeOperation='source-over';
 }
@@ -447,12 +502,12 @@ const cards=$$('.fc').map(el=>({el,x:+el.dataset.x,y:+el.dataset.y,w:+el.dataset
 cards.forEach(c=>{c.el.style.width=c.w+'px';c.el.style.height=c.h+'px';c.el.style.marginLeft=-c.w/2+'px';c.el.style.marginTop=-c.h/2+'px'});
 const gl=$('#gl'),mont=$('#montage'),mfs=$$('.mf');
 const SCN=['OPEN','EARTH','FOUNDERS','ONE','MISSION','NETWORK','MONTAGE','END'];
-function filmP(){const r=film.getBoundingClientRect();return clamp(-r.top/(r.height-innerHeight))}
+function filmP(){return 0} /* scroll film removed: the stage is just the intro */
 const sdown=$('#sdown');let introDone=RM;
 function scenes(p){
   sdown.classList.toggle('show',introDone&&p<.012);
   ovs.forEach(o=>{const op=sstep(o.a,o.a+.02,p)*(1-sstep(o.b-.02,o.b,p));o.el.style.opacity=op;
-    o.el.style.transform=`translateY(${(1-op)*14}px) scale(${.94+.06*op})`;o.el.style.letterSpacing=op<1?`${(1-op)*.12}em`:'';o.el.style.filter=op<1&&op>0?`blur(${(1-op)*6}px)`:''});
+    o.el.style.transform=`translateY(${(1-op)*10}px)`;o.el.style.filter=op<1&&op>0?`blur(${(1-op)*6}px)`:''});
   // cards
   const c=clamp((p-.5833)/.1667),sm=W<600,sc=sm?.55:Math.min(1,W/1200),xs=sm?Math.min(1,(W/2-62)/440):sc,ys=sm?1.25:sc;
   gl.style.opacity=sstep(.59,.62,p)*(1-sstep(.73,.75,p))*.8;
@@ -469,7 +524,7 @@ function scenes(p){
     mfs[idx].style.setProperty('--dr',eOut(clamp(lf*2.2)));}
   else mont.style.display='none';
   // chrome
-  $('#bar').style.width=p*100+'%';$('.vignette').style.opacity=1+Math.min(.6,Math.abs(VEL)*.5);
+  $('#bar').style.width=p*100+'%';
   const s=p*60,f=Math.floor((s%1)*24),pad=n=>String(n).padStart(2,'0');
   const sc_i=p<.125?0:p<.29?1:p<.45?2:p<.5?3:p<.5833?4:p<.75?5:p<.8333?6:7;
   $('#tc').textContent=`00:00:${pad(Math.floor(s))}:${pad(f)} · SC ${pad(sc_i+1)} ${SCN[sc_i]}`;
@@ -533,6 +588,16 @@ sizeAll(true);
 addEventListener('resize',()=>{clearTimeout(sizeAll.t);sizeAll.t=setTimeout(sizeAll,150)});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>buildText());
 requestAnimationFrame(loop);
+})();
+
+
+/* ---------- Work with us: opens WhatsApp with the message filled in ---------- */
+(function(){const f=document.getElementById('wf');if(!f)return;const WA='919735037523';
+f.addEventListener('submit',e=>{e.preventDefault();const d=new FormData(f),name=(d.get('name')||'').trim(),msg=(d.get('msg')||'').trim();
+  const iN=f.elements.namedItem('name'),iM=f.elements.namedItem('msg');iN.classList.toggle('bad',!name);iM.classList.toggle('bad',!msg);if(!name||!msg){(name?iM:iN).focus();document.getElementById('wfm').textContent='Add your name and a message first.';return}
+  const contact=(d.get('contact')||'').trim();
+  const t=`Hi Stark Industries! 👋\n\nName: ${name}${contact?`\nContact: ${contact}`:''}\nNeed: ${d.get('kind')}\n\n${msg}`;
+  window.open(`https://wa.me/${WA}?text=${encodeURIComponent(t)}`,'_blank','noopener');document.getElementById('wfm').textContent='WhatsApp opened. Tap send there.'});
 })();
 
 /* ---------- Stark Orbit lives inside HQ: one file, one website. HQ owns the back-button history. ---------- */
