@@ -49,7 +49,7 @@ a{color:inherit}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:29;background:var(--bg)}
 
 /* ---------------- FILM ---------------- */
-.film{position:relative;height:720vh}
+.film{position:relative;height:440vh}
 .stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;isolation:isolate}
 #fx{position:absolute;inset:0;width:100%;height:100%;display:block}
 .vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,transparent 45%,rgba(0,0,0,.55) 100%)}
@@ -402,8 +402,16 @@ const KF=[[0,'scroll'],[.012,'scroll'],[.075,'stars'],[.0833,'stars'],[.15,'glob
 const BLOOM={scroll:.55,stars:.25,globe:.45,ring:.85,sparkle:.8,hex:.5,grid:.15,text:.3};
 function frameShapes(p){let k=0;for(let j=0;j<KF.length-1;j++)if(p>=KF[j][0])k=j;const a=KF[k],b=KF[k+1];return [a[1],b[1],clamp((p-a[0])/(b[0]-a[0]))]}
 
+let VEL=0,LASTP=0,QX=null,QY=null,QA=null;
 function render(p){
   const [A,B,t]=frameShapes(p);const same=A===B;
+  // scroll velocity (smoothed) drives scatter, streaks and a zoom kick
+  VEL+=(clamp((p-LASTP)*420,-1.2,1.2)-VEL)*.18;LASTP=p;const av=Math.abs(VEL);
+  // camera: every scene slowly pushes in and turns as you scroll through it
+  let k=0;for(let j=0;j<KF.length-1;j++)if(p>=KF[j][0])k=j;const seg=clamp((p-KF[k][0])/((KF[k+1][0]-KF[k][0])||1));
+  const zoom=1+(same?.14*seg:.14*(1-ease(t)))+av*.08,rot=same?(seg-.5)*.07:0,cr=Math.cos(rot),sr=Math.sin(rot);
+  const ghost=!same?Math.sin(Math.PI*t):0;
+  if(!QX||QX.length!==N){QX=new Float32Array(N);QY=new Float32Array(N);QA=new Float32Array(N)}
   cx.setTransform(1,0,0,1,0,0);cx.clearRect(0,0,cv.width,cv.height);bx.clearRect(0,0,bloom.width,bloom.height);
   cx.globalCompositeOperation='lighter';bx.globalCompositeOperation='lighter';
   cx.fillStyle='#fff';bx.fillStyle='#cfe0ff';
@@ -415,14 +423,20 @@ function render(p){
     else{const ax=SX,ay=SY,aa=SA,as=SS;shape(B,i);const ti=clamp((t-R1[i]*.35)/.65),e=ease(ti);const curl=Math.sin(Math.PI*e)*(R2[i]-.5)*.5;
       x=ax+(SX-ax)*e+(-(SY-ay))*curl;y=ay+(SY-ay)*e+(SX-ax)*curl;al=aa+(SA-aa)*e;sz=as+(SS-as)*e}
     // gentle follow for smoothness
+    x+=(R1[i]-.5)*VEL*.22;y+=(R2[i]-.5)*VEL*.22+G1[i]*VEL*.03;
     PX[i]+=(x-PX[i])*.24;PY[i]+=(y-PY[i])*.24;
-    if(al<.01)continue;
-    const px=cxp+PX[i]*U,py=cyp+PY[i]*U;
-    cx.globalAlpha=al;const s=1.5*sz*ds;cx.fillRect(px*ds-s/2,py*ds-s/2,s,s);
+    QA[i]=0;if(al<.01)continue;
+    const rx=PX[i]*cr-PY[i]*sr,ry=PX[i]*sr+PY[i]*cr;
+    const px=cxp+rx*U*zoom,py=cyp+ry*U*zoom;QX[i]=px;QY[i]=py;QA[i]=al;
+    cx.globalAlpha=al;const s=1.5*sz*ds;
+    if(av>.06){const L=Math.min(46,av*30*(.4+R3[i]))*ds;cx.fillRect(px*ds-s/2,py*ds-(VEL>0?L:0),s,L+s);}
+    else cx.fillRect(px*ds-s/2,py*ds-s/2,s,s);
     if(sz>2){cx.globalAlpha=al*.5;cx.fillRect(px*ds-9*ds,py*ds-.5*ds,18*ds,ds);cx.fillRect(px*ds-.5*ds,py*ds-9*ds,ds,18*ds)}
     bx.globalAlpha=al*.9;bx.fillRect(px/4-.5,py/4-.5,1.2,1.2);
   }
-  const bl=same?BLOOM[A]:BLOOM[A]+(BLOOM[B]-BLOOM[A])*t;
+  // red ghost (chromatic split) while one scene morphs into the next
+  if(ghost>.05){cx.fillStyle='#ff3d3d';const off=(6+av*14)*ghost*ds;for(let i=0;i<N;i+=2){if(QA[i]<.05)continue;cx.globalAlpha=QA[i]*.55*ghost;cx.fillRect(QX[i]*ds+off,QY[i]*ds,1.4*ds,1.4*ds)}cx.fillStyle='#fff'}
+  const bl=(same?BLOOM[A]:BLOOM[A]+(BLOOM[B]-BLOOM[A])*t)+av*.25+ghost*.15;
   cx.globalAlpha=Math.min(1,bl*1.6);cx.imageSmoothingEnabled=true;cx.drawImage(bloom,0,0,cv.width,cv.height);
   cx.globalAlpha=1;cx.globalCompositeOperation='source-over';
 }
@@ -438,7 +452,7 @@ const sdown=$('#sdown');let introDone=RM;
 function scenes(p){
   sdown.classList.toggle('show',introDone&&p<.012);
   ovs.forEach(o=>{const op=sstep(o.a,o.a+.02,p)*(1-sstep(o.b-.02,o.b,p));o.el.style.opacity=op;
-    o.el.style.transform=`translateY(${(1-op)*10}px)`;o.el.style.filter=op<1&&op>0?`blur(${(1-op)*6}px)`:''});
+    o.el.style.transform=`translateY(${(1-op)*14}px) scale(${.94+.06*op})`;o.el.style.letterSpacing=op<1?`${(1-op)*.12}em`:'';o.el.style.filter=op<1&&op>0?`blur(${(1-op)*6}px)`:''});
   // cards
   const c=clamp((p-.5833)/.1667),sm=W<600,sc=sm?.55:Math.min(1,W/1200),xs=sm?Math.min(1,(W/2-62)/440):sc,ys=sm?1.25:sc;
   gl.style.opacity=sstep(.59,.62,p)*(1-sstep(.73,.75,p))*.8;
@@ -455,7 +469,7 @@ function scenes(p){
     mfs[idx].style.setProperty('--dr',eOut(clamp(lf*2.2)));}
   else mont.style.display='none';
   // chrome
-  $('#bar').style.width=p*100+'%';
+  $('#bar').style.width=p*100+'%';$('.vignette').style.opacity=1+Math.min(.6,Math.abs(VEL)*.5);
   const s=p*60,f=Math.floor((s%1)*24),pad=n=>String(n).padStart(2,'0');
   const sc_i=p<.125?0:p<.29?1:p<.45?2:p<.5?3:p<.5833?4:p<.75?5:p<.8333?6:7;
   $('#tc').textContent=`00:00:${pad(Math.floor(s))}:${pad(f)} · SC ${pad(sc_i+1)} ${SCN[sc_i]}`;
