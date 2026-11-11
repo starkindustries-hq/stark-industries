@@ -165,6 +165,24 @@ html.orbit-open,html.orbit-open body{overflow:hidden}
 
 
 
+
+/* get jarvis */
+.top a.mono.getj{border-color:rgba(134,219,255,.45);background:rgba(8,24,38,.65);box-shadow:0 0 18px rgba(134,219,255,.22),inset 0 0 12px rgba(134,219,255,.08)}
+.top a.mono.getj:hover{background:rgba(134,219,255,.14)}
+.gj{display:grid;grid-template-columns:1fr 1.2fr;gap:14px}
+.gj-main{border:1px solid rgba(134,219,255,.3);border-radius:16px;padding:26px;display:grid;gap:14px;align-content:start;background:radial-gradient(circle at 85% 10%,rgba(134,219,255,.2),transparent 55%),var(--bg-2)}
+.gj-main h3{margin:0;font-size:clamp(30px,3.6vw,44px);font-weight:600;letter-spacing:-.04em;line-height:1}
+.dl{justify-self:start;display:inline-flex;align-items:center;gap:10px;background:#86dbff;color:#04121c;font-weight:600;font-size:16px;padding:14px 22px;border-radius:999px;text-decoration:none;box-shadow:0 0 30px rgba(134,219,255,.35);transition:transform .2s}
+.dl:hover{transform:translateY(-2px)}
+.gj-main p{margin:0}
+.sha{word-break:break-all;opacity:.7}
+.gj-steps{margin:0;padding:0;list-style:none;counter-reset:st;border:1px solid var(--hair);border-radius:16px;background:var(--bg-2)}
+.gj-steps li{counter-increment:st;display:grid;grid-template-columns:34px 1fr;gap:12px;padding:16px 20px;border-bottom:1px solid var(--hair);color:var(--dim);font-size:15px}
+.gj-steps li:last-child{border-bottom:0}
+.gj-steps li::before{content:counter(st,decimal-leading-zero);font-family:var(--mono);font-size:12px;color:#86dbff;padding-top:3px}
+.gj-steps b{color:var(--ink);font-weight:500}
+@media (max-width:860px){.gj{grid-template-columns:1fr}}
+
 /* work with us + faq */
 .wf{display:grid;gap:18px;border:1px solid var(--hair);border-radius:16px;background:var(--bg-2);padding:clamp(18px,3vw,30px)}
 .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
@@ -224,7 +242,7 @@ html.orbit-open,html.orbit-open body{overflow:hidden}
 <div id="bar"></div>
 <div class="top"><div class="wrap">
   <a class="mark" href="#top"><svg class="hexi"><use href="#hx"/></svg>STARK INDUSTRIES</a>
-  <a class="mono" href="#network">Skip to network ↓</a>
+  <a class="mono getj" href="#get-jarvis">Get Jarvis app ↓</a>
 </div></div>
 <div class="tcode mono" id="tc">00:00:00:00 · SC 01</div>
 
@@ -332,6 +350,35 @@ html.orbit-open,html.orbit-open body{overflow:hidden}
 </section>
 
 
+
+<!-- ================= GET JARVIS ================= -->
+<section class="sec" id="get-jarvis">
+  <div class="wrap">
+    <div class="sec-h rv">
+      <h2>Get the Jarvis app. <span>For Android.</span></h2>
+      <p>The full Jarvis on your phone: wakes on “Hey Jarvis”, calls, opens apps and works hands-free. English and Hindi.</p>
+    </div>
+    <div class="gj rv">
+      <div class="gj-main">
+        <span class="mono">JARVIS FOR ANDROID · <span id="gjv">v1.0.7</span></span>
+        <h3>J.A.R.V.I.S.</h3>
+        <a class="dl" href="Jarvis.apk" download="Jarvis.apk">Download Jarvis.apk ↓</a>
+        <p class="mono" id="gjm">87MB · Android 8 or newer · English + Hindi</p>
+        <p class="mono sha">SHA-256 <span id="gjs">2b2da45e77dc9ad4572239364617202b9fb4e4aed0bbc126f676cf1c5ec36aa0</span></p>
+        <p class="mono" style="opacity:.7">Only install Jarvis from this page. iPhone? Use the J.A.R.V.I.S. card above in your browser.</p>
+      </div>
+      <ol class="gj-steps">
+        <li><span>Tap <b>Download Jarvis.apk</b> and wait for it to finish.</span></li>
+        <li><span>Open the downloaded file from your notifications or the <b>Downloads</b> folder.</span></li>
+        <li><span>If Android asks, allow <b>Install unknown apps</b> for your browser, then go back.</span></li>
+        <li><span>Tap <b>Install</b>. If Play Protect warns you, tap <b>More details → Install anyway</b>.</span></li>
+        <li><span>Open Jarvis and allow the <b>microphone, phone and notification</b> permissions.</span></li>
+        <li><span>Add your free Gemini key from <b>aistudio.google.com</b>, then say <b>“Hey Jarvis”</b>.</span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
 <!-- ================= FAQ ================= -->
 <section class="sec" id="faq">
   <div class="wrap">
@@ -339,7 +386,7 @@ html.orbit-open,html.orbit-open body{overflow:hidden}
     <div class="faq rv">
       <details><summary>Who is Stark Industries?</summary><p>Two 15-year-old founders from India, Binit and Mridul, building websites, apps and AI tools. Our mission is to make the world's tech more reliable.</p></details>
       <details><summary>Are the sites free?</summary><p>Yes. Stark Orbit, Jarvis and Ultron are all free to use.</p></details>
-      <details><summary>How do I talk to Jarvis?</summary><p>Tap the J.A.R.V.I.S. card, pick English or Hindi, allow the microphone, and speak. It works best in Chrome.</p></details>
+      <details><summary>How do I talk to Jarvis?</summary><p>Tap the J.A.R.V.I.S. card, pick English or Hindi, allow the microphone, and speak. It works best in Chrome. On Android you can also install the full app: tap Get Jarvis app at the top.</p></details>
       <details><summary>How is Ultron different from Jarvis?</summary><p>Ultron is a separate site with its own personality: colder, sharper and a little menacing. It can look through your camera, read what it sees, and remember what you tell it.</p></details>
       <details><summary>Do I need an API key?</summary><p>Jarvis and Ultron think with Google Gemini. Get a free key at aistudio.google.com, paste it in once, and it stays saved in your browser.</p></details>
       <details><summary>Is my data stored anywhere?</summary><p>Your key, chats and Ultron's memory stay on your own device. Questions go to Google Gemini to be answered; nothing comes to us.</p></details>
@@ -565,6 +612,12 @@ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>buildText(
 requestAnimationFrame(loop);
 })();
 
+
+
+/* ---------- Get Jarvis: show the latest version info ---------- */
+fetch('jarvis-app.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{if(!j)return;const s=id=>document.getElementById(id);
+  if(j.version)s('gjv').textContent='v'+j.version;if(j.size)s('gjm').textContent=`${j.size} · ${j.notes||'Android 8 or newer'}`;if(j.sha256)s('gjs').textContent=j.sha256;
+  if(j.file)document.querySelectorAll('.dl').forEach(a=>{a.href=j.file;a.setAttribute('download',j.file)})}).catch(()=>{});
 
 /* ---------- Stark Orbit lives inside HQ: one file, one website. HQ owns the back-button history. ---------- */
 (function(){
