@@ -224,7 +224,7 @@ html.orbit-open,html.orbit-open body{overflow:hidden}
 <div id="bar"></div>
 <div class="top"><div class="wrap">
   <a class="mark" href="#top"><svg class="hexi"><use href="#hx"/></svg>STARK INDUSTRIES</a>
-  <span style="display:flex;gap:8px"><a class="mono" href="#network">Network</a><a class="mono" href="#work">Work with us</a></span>
+  <a class="mono" href="#network">Skip to network ↓</a>
 </div></div>
 <div class="tcode mono" id="tc">00:00:00:00 · SC 01</div>
 
@@ -332,32 +332,8 @@ html.orbit-open,html.orbit-open body{overflow:hidden}
 </section>
 
 
-<!-- ================= WORK WITH US ================= -->
-<section class="sec" id="work">
-  <div class="wrap">
-    <div class="sec-h rv">
-      <h2>Work with us. <span>Tell us what to build.</span></h2>
-      <p>Websites, apps and AI tools. Fill this in and it opens WhatsApp with your message ready to send to us.</p>
-    </div>
-    <form class="wf rv" id="wf" novalidate>
-      <div class="fgrid">
-        <label><span class="mono">Your name</span><input name="name" required maxlength="60" autocomplete="name" placeholder="Tony"></label>
-        <label><span class="mono">How to reach you</span><input name="contact" maxlength="80" placeholder="Phone, Instagram or email"></label>
-      </div>
-      <fieldset class="kinds"><legend class="mono">What do you need?</legend>
-        <label><input type="radio" name="kind" value="Website" checked><span>Website</span></label>
-        <label><input type="radio" name="kind" value="App"><span>App</span></label>
-        <label><input type="radio" name="kind" value="AI tool"><span>AI tool</span></label>
-        <label><input type="radio" name="kind" value="Something else"><span>Something else</span></label>
-      </fieldset>
-      <label><span class="mono">Tell us about it</span><textarea name="msg" required rows="4" maxlength="1000" placeholder="What should it do? Any deadline?"></textarea></label>
-      <div class="frow"><button class="go" type="submit">Send on WhatsApp →</button><span class="mono" id="wfm">Opens WhatsApp. Nothing is sent until you tap send there.</span></div>
-    </form>
-  </div>
-</section>
-
 <!-- ================= FAQ ================= -->
-<section class="sec" id="faq" style="padding-top:20px">
+<section class="sec" id="faq">
   <div class="wrap">
     <div class="sec-h rv"><h2>FAQ. <span>Quick answers.</span></h2></div>
     <div class="faq rv">
@@ -367,8 +343,7 @@ html.orbit-open,html.orbit-open body{overflow:hidden}
       <details><summary>How is Ultron different from Jarvis?</summary><p>Ultron is a separate site with its own personality: colder, sharper and a little menacing. It can look through your camera, read what it sees, and remember what you tell it.</p></details>
       <details><summary>Do I need an API key?</summary><p>Jarvis and Ultron think with Google Gemini. Get a free key at aistudio.google.com, paste it in once, and it stays saved in your browser.</p></details>
       <details><summary>Is my data stored anywhere?</summary><p>Your key, chats and Ultron's memory stay on your own device. Questions go to Google Gemini to be answered; nothing comes to us.</p></details>
-      <details><summary>Can you build something for me?</summary><p>Yes. Use the Work with us form above and we'll reply on WhatsApp.</p></details>
-    </div>
+          </div>
   </div>
 </section>
 
@@ -590,15 +565,6 @@ if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>buildText(
 requestAnimationFrame(loop);
 })();
 
-
-/* ---------- Work with us: opens WhatsApp with the message filled in ---------- */
-(function(){const f=document.getElementById('wf');if(!f)return;const WA='919735037523';
-f.addEventListener('submit',e=>{e.preventDefault();const d=new FormData(f),name=(d.get('name')||'').trim(),msg=(d.get('msg')||'').trim();
-  const iN=f.elements.namedItem('name'),iM=f.elements.namedItem('msg');iN.classList.toggle('bad',!name);iM.classList.toggle('bad',!msg);if(!name||!msg){(name?iM:iN).focus();document.getElementById('wfm').textContent='Add your name and a message first.';return}
-  const contact=(d.get('contact')||'').trim();
-  const t=`Hi Stark Industries! 👋\n\nName: ${name}${contact?`\nContact: ${contact}`:''}\nNeed: ${d.get('kind')}\n\n${msg}`;
-  window.open(`https://wa.me/${WA}?text=${encodeURIComponent(t)}`,'_blank','noopener');document.getElementById('wfm').textContent='WhatsApp opened. Tap send there.'});
-})();
 
 /* ---------- Stark Orbit lives inside HQ: one file, one website. HQ owns the back-button history. ---------- */
 (function(){
